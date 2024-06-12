@@ -6,6 +6,9 @@ namespace WebApplication3
         {
             var builder = WebApplication.CreateBuilder(args); //Создает экземпляр построителя веб-приложения.
 
+            builder.Configuration.AddJsonFile("appsettings.json"); // эта строка для загрузки конфигурации из файла appsettings.json
+
+
             builder.Services.AddControllers(); //Регистрирует контроллеры MVC как сервисы.
             builder.Services.AddEndpointsApiExplorer(); // Добавляет службы исследователя API для обнаружения конечных точек.
 
