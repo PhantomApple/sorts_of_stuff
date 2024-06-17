@@ -62,6 +62,52 @@ namespace WebApplication3.Controllers
             }
         }
 
+        [HttpPost("PostPersons", Name = "PostPersons")]
+        public IActionResult PostPersons(int id_discipline, int id_teach, int id_group, int id_office, int id_user, string DayNedel, int hours_passed)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    var commandText = "INSERT INTO Raspes ( id_discipline, id_teach, id_group, id_office, id_user, DayNedel, hours_passed) " +
+                                      "VALUES ( @id_discipline, @id_teach, @id_group, @id_office, @id_user, @DayNedel, @hours_passed)";
+                    var command = new SqlCommand(commandText, connection);
+
+                    // Пример данных для вставки
+                    var persons = new List<Person>
+                    {
+                        new Person { id_discipline = id_discipline, id_teach = id_teach, id_group = id_group, id_office = id_office, id_user = id_user, DayNedel = DayNedel, hours_passed = hours_passed }
+                    };
+
+                    foreach (var person in persons)
+                    {
+                        command.Parameters.Clear();
+                        
+                        command.Parameters.AddWithValue("@id_discipline", person.id_discipline);
+                        command.Parameters.AddWithValue("@id_teach", person.id_teach);
+                        command.Parameters.AddWithValue("@id_group", person.id_group);
+                        command.Parameters.AddWithValue("@id_office", person.id_office);
+                        command.Parameters.AddWithValue("@id_user", person.id_user);
+                        command.Parameters.AddWithValue("@DayNedel", person.DayNedel);
+                        command.Parameters.AddWithValue("@hours_passed", person.hours_passed);
+
+                        command.ExecuteNonQuery();
+                    }
+
+                    return Ok("Data inserted successfully");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving data from the database.");
+                return StatusCode(501);
+            }
+        }
+
         private bool CheckDatabaseConnection()
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
